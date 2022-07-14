@@ -10,18 +10,18 @@ provider:
 
 plugins:
   - serverless-finch
-  # 'serverless-single-page-app-plugin' is a custom plugin that located .serverless_plugins folder.
+  # 'serverless-single-page-app-plugin' is a custom plugin that located serverless-single-page-app-plugin folder.
   # Existing plugin (https://www.npmjs.com/package/serverless-single-page-app-plugin) doesn't have invalidate cache feature that often used during CI/CD events.
   # How to build your own plugins: https://www.serverless.com/framework/docs/providers/aws/guide/plugins#service-local-plugin
   - serverless-single-page-app-plugin
 
 custom:
   client:
-    bucketName: node-in-aws-web-bucket
+    bucketName: roman-tarnakin-first-aws-app-with-invalidation
     distributionFolder: build
-  s3BucketName: ${self:custom.client.bucketName}
 
   ## Serverless-single-page-app-plugin configuration:
+  s3BucketName: ${self:custom.client.bucketName}
   s3LocalPath: ${self:custom.client.distributionFolder}/
 
 resources:
@@ -86,7 +86,7 @@ resources:
           # Aliases:
           # - mysite.example.com
           DefaultRootObject: index.html
-          ## Since the Single Page App is taking care of the routing we need to make sure ever path is served with index.html
+          ## Since the Single Page App is taking care of the routing we need to make sure every path is served with index.html
           ## The only exception are files that actually exist e.h. app.js, reset.css
           CustomErrorResponses:
             - ErrorCode: 404
