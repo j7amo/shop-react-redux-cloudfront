@@ -31,7 +31,7 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-localStorage.setItem('authorization_token', 'ajdhbW86VEVTVF9QQVNTV09SRA==');
+localStorage.setItem('authorization_token', process.env.AUTHORIZATION_TOKEN as string);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
