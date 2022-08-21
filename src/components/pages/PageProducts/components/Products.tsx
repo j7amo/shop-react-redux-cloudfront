@@ -30,39 +30,66 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const {
+  REACT_APP_COGNITO_URL,
+  REACT_APP_COGNITO_CLIENT_ID,
+  REACT_APP_COGNITO_REDIRECT_URI
+} = process.env;
+
 export default function Products() {
   const classes = useStyles();
   const [products, setProducts] = useState<Product[]>([]);
+  const [identityToken, setIdentityToken] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    axios.get(`${API_PATHS.bff}/products`)
-      .then(({ data }) => setProducts(data.productsList));
-  }, [])
+    const credentials = localStorage.getItem('credentials');
+    if (credentials) {
+      const { id_token } = JSON.parse(credentials);
+      setIdentityToken(id_token);
+    }
+    setIsLoggedIn(!!credentials);
+  }, [setIsLoggedIn]);
+
+  useEffect(() => {
+    axios({
+      method: 'GET',
+      url: `${API_PATHS.bff}/products`,
+      headers: {
+        Authorization: `Bearer ${identityToken}`
+      }
+    }).then(({ data }) => setProducts(data.productsList));
+  }, [identityToken])
 
   return (
-    <Grid container spacing={4}>
-      {products.map((product: Product, index: number) => (
-        <Grid item key={product.id} xs={12} sm={6} md={4}>
-          <Card className={classes.card}>
-            <CardMedia
-              className={classes.cardMedia}
-              image={`https://source.unsplash.com/random?sig=${index}`}
-              title="Image title"
-            />
-            <CardContent className={classes.cardContent}>
-              <Typography gutterBottom variant="h5" component="h2">
-                {product.title}
-              </Typography>
-              <Typography>
-                {formatAsPrice(product.price)}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <AddProductToCart product={product}/>
-            </CardActions>
-          </Card>
+      isLoggedIn ? (
+        <Grid container spacing={4}>
+          {products.map((product: Product, index: number) => (
+              <Grid item key={product.id} xs={12} sm={6} md={4}>
+                <Card className={classes.card}>
+                  <CardMedia
+                      className={classes.cardMedia}
+                      image={`https://source.unsplash.com/random?sig=${index}`}
+                      title="Image title"
+                  />
+                  <CardContent className={classes.cardContent}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {product.title}
+                    </Typography>
+                    <Typography>
+                      {formatAsPrice(product.price)}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <AddProductToCart product={product}/>
+                  </CardActions>
+                </Card>
+              </Grid>
+          ))}
         </Grid>
-      ))}
-    </Grid>
+    ) : (
+          <a href={`${REACT_APP_COGNITO_URL}/login?client_id=${REACT_APP_COGNITO_CLIENT_ID}&response_type=code&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=${REACT_APP_COGNITO_REDIRECT_URI}`}>Sign in</a>
+    )
   );
 }
+

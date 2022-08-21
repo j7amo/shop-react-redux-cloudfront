@@ -8,6 +8,8 @@ import * as serviceWorker from './serviceWorker';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import axios from 'axios';
 
+localStorage.setItem('authorization_token', process.env.REACT_APP_AUTHORIZATION_TOKEN as string);
+
 axios.interceptors.response.use(
   response => {
     return response;
@@ -30,8 +32,6 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-localStorage.setItem('authorization_token', process.env.AUTHORIZATION_TOKEN as string);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
