@@ -12,6 +12,7 @@ import PageCart from "components/pages/PageCart/PageCart";
 import PageOrders from "components/pages/PageOrders/PageOrders";
 import PageOrder from "components/pages/PageOrder/PageOrder";
 import PageProductImport from "components/pages/admin/PageProductImport/PageProductImport";
+import Callback from "components/Callback/Callback";
 
 function App() {
 
@@ -22,6 +23,9 @@ function App() {
           <MainLayout>
             <Route exact path="/">
               <PageProducts/>
+            </Route>
+            <Route exact path="/callback">
+              <Callback/>
             </Route>
             <Route exact path={["/admin/product-form/:id", '/admin/product-form']}>
               <PageProductForm/>
